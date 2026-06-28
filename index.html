@@ -9,23 +9,54 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="健康助手" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" />
-    <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152x152.png" />
-    <link rel="apple-touch-icon" sizes="120x120" href="/icons/icon-120x120.png" />
-    <link rel="apple-touch-startup-image" href="/icons/splash.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.svg" />
+    <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152x152.svg" />
+    <link rel="apple-touch-icon" sizes="120x120" href="/icons/icon-120x120.svg" />
 
     <!-- Android -->
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="theme-color" content="#1989fa" />
 
-    <!-- 禁止电话/邮箱自动识别 -->
     <meta name="format-detection" content="telephone=no" />
     <meta name="format-detection" content="email=no" />
 
     <title>健康监测助手</title>
+
+    <!-- 内联加载动画，白屏期立即显示 -->
+    <style>
+      .app-loading {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: #f7f8fa;
+        font-family: -apple-system, sans-serif;
+      }
+      .app-loading .spinner {
+        width: 28px;
+        height: 28px;
+        border: 3px solid #e0e0e0;
+        border-top-color: #1989fa;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+      @keyframes spin { to { transform: rotate(360deg) } }
+      .app-loading p {
+        margin-top: 16px;
+        font-size: 14px;
+        color: #969799;
+      }
+    </style>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app">
+      <div class="app-loading">
+        <div class="spinner"></div>
+        <p>加载中...</p>
+      </div>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

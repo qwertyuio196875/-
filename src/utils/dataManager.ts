@@ -1,6 +1,7 @@
-import * as XLSX from 'xlsx'
 import { db } from '../db'
 import { encryptData, decryptData, type ExportData, type EncryptedPayload } from './crypto'
+
+// xlsx 使用动态导入，见 exportExcel()
 
 async function collectExportData(): Promise<ExportData> {
   const [patient, medicine, doseRecord, vitalsRecord] = await Promise.all([
@@ -40,6 +41,7 @@ export async function importEncrypted(
 }
 
 export async function exportExcel(filename: string = '健康数据') {
+  const XLSX = await import('xlsx')
   const data = await collectExportData()
 
   const patients = data.data.patient.map((p: any) => ({
