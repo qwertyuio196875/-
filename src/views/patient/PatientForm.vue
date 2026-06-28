@@ -63,6 +63,16 @@ function toggleCondition(cond: string) {
   }
 }
 
+function generateId(): string {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID()
+  }
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0
+    return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16)
+  })
+}
+
 function addCustomCondition() {
   const val = customCondition.value.trim()
   if (!val) return
@@ -85,28 +95,33 @@ async function onSubmit() {
     return
   }
 
-  if (isEdit) {
-    await db.patient.update(route.params.id as string, {
-      ...form.value,
-      phone: form.value.phone || undefined,
-      allergies: form.value.allergies || undefined,
-      notes: form.value.notes || undefined,
-    })
-    showSuccessToast('已更新')
-  } else {
-    const newPatient: Patient = {
-      id: crypto.randomUUID(),
-      ...form.value,
-      phone: form.value.phone || undefined,
-      allergies: form.value.allergies || undefined,
-      notes: form.value.notes || undefined,
-      hasReminder: false,
-      createdAt: Date.now(),
+  try {
+    const payload = JSON.parse(JSON.stringify(form.value))
+    if (isEdit) {
+      await db.patient.update(route.params.id as string, {
+        ...payload,
+        phone: payload.phone || undefined,
+        allergies: payload.allergies || undefined,
+        notes: payload.notes || undefined,
+      })
+      showSuccessToast('已更新')
+    } else {
+      const newPatient: Patient = {
+        id: generateId(),
+        ...payload,
+        phone: payload.phone || undefined,
+        allergies: payload.allergies || undefined,
+        notes: payload.notes || undefined,
+        hasReminder: false,
+        createdAt: Date.now(),
+      }
+      await db.patient.add(newPatient)
+      showSuccessToast('已添加')
     }
-    await db.patient.add(newPatient)
-    showSuccessToast('已添加')
+    router.push('/patients')
+  } catch (e: any) {
+    showToast(e?.message || '操作失败，请重试')
   }
-  router.push('/patients')
 }
 </script>
 
